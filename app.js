@@ -76,9 +76,13 @@ var FilterablePostList = React.createClass({
         <div className="col s12 m8 offset-m2">
           <h1>Latest News</h1>
 
-          <SearchBar filterText={this.state.filterText} onUserInput={this.handleUserInput}/>
+          <SearchBar
+            filterText={this.state.filterText}
+            onUserInput={this.handleUserInput}/>
 
-          <PostList posts={this.state.posts} filterText={this.state.filterText}/>
+          <PostList
+            posts={this.state.posts}
+            filterText={this.state.filterText}/>
         </div>
       </div>
     );
