@@ -43,4 +43,20 @@ var SearchBar = React.createClass({
   }
 });
 
-ReactDOM.render(<PostList />, document.getElementById('content'));
+var FilterablePostList = React.createClass({
+  render: function() {
+    return (
+      <div className="row">
+        <div className="col s12 m8 offset-m2">
+          <h1>Latest News</h1>
+
+          <SearchBar />
+
+          <PostList />
+        </div>
+      </div>
+    );
+  }
+});
+
+ReactDOM.render(<FilterablePostList />, document.getElementById('content'));
