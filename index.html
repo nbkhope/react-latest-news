@@ -23,7 +23,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
   </head>
   <body>
-    <div id="content"></div>
+    <div id="content" class="container"></div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m8 offset-m2">
+          <h1>Latest News</h1>
+
+          <div class="row">
+            <form>
+              <div class="input-field col s12">
+                <i class="material-icons prefix">search</i>
+                <input type="text" placeholder="Search...">
+              </div>
+            </form>
+          </div>
+
+          <ul class="collection">
+            <li class="collection-item avatar"><i class="material-icons circle red">thumb_up</i><a href="#" class="title">New version of Ruby on Rails released</a><span class="badge">3 likes</span></li>
+            <li class="collection-item avatar"><i class="material-icons circle red">thumb_up</i><a href="#">JavaScript is the most popular language according to Stack Overflow</a><span class="badge">2 likes</span></li>
+            <li class="collection-item avatar"><i class="material-icons circle red">thumb_up</i><a href="#">Coding jobs are on demand for 2016</a><span class="badge">0 likes</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
     <script type="text/babel" src="scripts/app.js"></script>
   </body>
