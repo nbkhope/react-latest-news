@@ -58,12 +58,23 @@ var FilterablePostList = React.createClass({
     // Returns the initial state object
     return {
       filterText: '', // for the SearchBar component
-      posts: [
-        { id: 1, title: "New version of Ruby on Rails released", link: "#", likes: 3 },
-        { id: 2, title: "JavaScript is the most popular language according to Stack Overflow", link: "#", likes: 2 },
-        { id: 3, title: "Coding jobs are on demand for 2016", link: "#", likes: 0 }
-      ] // for the PostList component
+      posts: [] // for the PostList component
     };
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({
+          posts: data
+        });
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
   },
   handleUserInput: function(filterText) {
     this.setState({
@@ -89,4 +100,4 @@ var FilterablePostList = React.createClass({
   }
 });
 
-ReactDOM.render(<FilterablePostList />, document.getElementById('content'));
+ReactDOM.render(<FilterablePostList url="/posts" />, document.getElementById('content'));
