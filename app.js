@@ -12,9 +12,16 @@ var PostRow = React.createClass({
 
 var PostList = React.createClass({
   render: function() {
-    var posts = this.props.posts.map(function(element) {
-      return <PostRow key={element.id} post={element} />
-    });
+    var posts = this.props.posts
+      // first filter the posts accordingly to searchBar
+      .filter(function(element) {
+        // only allow posts whose filterText match the post title
+        return element.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) > -1;
+      }.bind(this)) // note the bind(this) right after closing brace for the function
+      // then transform posts into PostRow components
+      .map(function(element) {
+        return <PostRow key={element.id} post={element} />
+      });
 
     return (
       <ul className="collection">
@@ -25,6 +32,9 @@ var PostList = React.createClass({
 });
 
 var SearchBar = React.createClass({
+  handleSearchChange: function(e) {
+    this.props.onUserInput(e.target.value);
+  },
   render: function() {
     return (
       <div className="row">
@@ -34,7 +44,8 @@ var SearchBar = React.createClass({
             <input
               type="text"
               placeholder="Search..."
-              value={this.props.filterText}/>
+              value={this.props.filterText}
+              onChange={this.handleSearchChange}/>
           </div>
         </form>
       </div>
@@ -54,15 +65,20 @@ var FilterablePostList = React.createClass({
       ] // for the PostList component
     };
   },
+  handleUserInput: function(filterText) {
+    this.setState({
+      filterText: filterText
+    });
+  },
   render: function() {
     return (
       <div className="row">
         <div className="col s12 m8 offset-m2">
           <h1>Latest News</h1>
 
-          <SearchBar filterText={this.state.filterText}/>
+          <SearchBar filterText={this.state.filterText} onUserInput={this.handleUserInput}/>
 
-          <PostList posts={this.state.posts}/>
+          <PostList posts={this.state.posts} filterText={this.state.filterText}/>
         </div>
       </div>
     );
