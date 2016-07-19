@@ -1,8 +1,11 @@
 var PostRow = React.createClass({
+  handleLikeButton: function() {
+    this.props.onLikeClick(this.props.post);
+  },
   render: function() {
     return (
       <li className="collection-item avatar">
-        <i className="material-icons circle red">thumb_up</i>
+        <i className="material-icons circle red like-button">thumb_up</i>
         <a href={this.props.post.link} className="title">{this.props.post.title}</a>
         <span className="badge">{this.props.post.likes} likes</span>
       </li>
@@ -20,8 +23,8 @@ var PostList = React.createClass({
       }.bind(this)) // note the bind(this) right after closing brace for the function
       // then transform posts into PostRow components
       .map(function(element) {
-        return <PostRow key={element.id} post={element} />
-      });
+        return <PostRow key={element.id} post={element} onClick={this.props.onLikeClick}/>
+      }.bind(this));
 
     return (
       <ul className="collection">
@@ -186,6 +189,22 @@ var FilterablePostList = React.createClass({
       })
       ;
   },
+  handlePostLike: function(post) {
+    $.ajax({
+      url: this.props.url + "/" + post.id,
+      dataType: 'json',
+      type: 'PUT',
+      data: post,
+      context: this
+    })
+      .then(function(data) {
+        console.log(data);
+        post = data;
+      })
+      .fail(function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      });
+  },
   render: function() {
     return (
       <div className="row">
@@ -198,7 +217,8 @@ var FilterablePostList = React.createClass({
 
           <PostList
             posts={this.state.posts}
-            filterText={this.state.filterText}/>
+            filterText={this.state.filterText}
+            onLikeClick={this.handlePostLike}/>
 
           <PostForm onPostSubmit={this.handlePostSubmit}/>
         </div>
