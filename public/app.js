@@ -58,7 +58,6 @@ var PostForm = React.createClass({
     return {
       title: '',
       link: '',
-      likes: 0
     }
   },
   handleTitleChange: function(e) {
@@ -71,11 +70,32 @@ var PostForm = React.createClass({
       link: e.target.value
     });
   },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var title = this.state.title.trim();
+    var link = this.state.link.trim();
+    // prevent form from being submitted if any of the input fields are empty
+    if (!title || !link) {
+      return;
+    }
+
+    // Call upon the parent component to submit the post
+    this.props.onPostSubmit({
+      title: title,
+      link: link
+    });
+
+    // Clear up the form
+    this.setState({
+      title: '',
+      link: ''
+    });
+  },
   render: function() {
     return (
       <div>
         <h3>Create New Post</h3>
-        <form>
+        <form onSubmit={this.handleSubmit}>
           <div className="input-field">
             <input
               type="text"
@@ -126,6 +146,30 @@ var FilterablePostList = React.createClass({
       filterText: filterText
     });
   },
+  handlePostSubmit: function(post) {
+    // initialize number of likes to zero here
+    // since our fake backend won't do it for us
+    post.likes = 0;
+    
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: post,
+      context: this
+    })
+      .then(function(data) {
+        this.setState({
+          posts: this.state.posts.concat(post)
+          // posts: data
+        });
+        console.log(data);
+      })
+      .fail(function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      })
+      ;
+  },
   render: function() {
     return (
       <div className="row">
@@ -140,7 +184,7 @@ var FilterablePostList = React.createClass({
             posts={this.state.posts}
             filterText={this.state.filterText}/>
 
-          <PostForm />
+          <PostForm onPostSubmit={this.handlePostSubmit}/>
         </div>
       </div>
     );
