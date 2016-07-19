@@ -53,6 +53,51 @@ var SearchBar = React.createClass({
   }
 });
 
+var PostForm = React.createClass({
+  getInitialState: function() {
+    return {
+      title: '',
+      link: '',
+      likes: 0
+    }
+  },
+  handleTitleChange: function(e) {
+    this.setState({
+      title: e.target.value
+    });
+  },
+  handleLinkChange: function(e) {
+    this.setState({
+      link: e.target.value
+    });
+  },
+  render: function() {
+    return (
+      <div>
+        <h3>Create New Post</h3>
+        <form>
+          <div className="input-field">
+            <input
+              type="text"
+              placeholder="Title"
+              value={this.state.title}
+              onChange={this.handleTitleChange}/>
+            <input
+              type="text"
+              placeholder="Link URL"
+              value={this.state.link}
+              onChange={this.handleLinkChange}/>
+            <button type="submit" className="btn waves-effect waves-light">
+              Submit
+              <i className="material-icons right">send</i>
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+});
+
 var FilterablePostList = React.createClass({
   getInitialState: function() {
     // Returns the initial state object
@@ -94,6 +139,8 @@ var FilterablePostList = React.createClass({
           <PostList
             posts={this.state.posts}
             filterText={this.state.filterText}/>
+
+          <PostForm />
         </div>
       </div>
     );
