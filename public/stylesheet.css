@@ -1,3 +1,7 @@
 .like-button {
   cursor: pointer;
 }
+
+.trash-button {
+  cursor: pointer;
+}
