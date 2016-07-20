@@ -2,12 +2,16 @@ var PostRow = React.createClass({
   handleLikeButton: function() {
     this.props.onLikeClick(this.props.post);
   },
+  handleTrashButton: function() {
+    this.props.onTrashClick(this.props.post);
+  },
   render: function() {
     return (
       <li className="collection-item avatar">
         <i className="material-icons circle red like-button" onClick={this.handleLikeButton}>thumb_up</i>
         <a href={this.props.post.link} className="title">{this.props.post.title}</a>
         <span className="badge">{this.props.post.likes} likes</span>
+        <p><i className="material-icons trash-button" onClick={this.handleTrashButton}>delete</i></p>
       </li>
     );
   }
@@ -23,7 +27,12 @@ var PostList = React.createClass({
       }.bind(this)) // note the bind(this) right after closing brace for the function
       // then transform posts into PostRow components
       .map(function(element) {
-        return <PostRow key={element.id} post={element} onLikeClick={this.props.onLikeClick}/>
+        return (
+          <PostRow
+            key={element.id} post={element}
+            onLikeClick={this.props.onLikeClick}
+            onTrashClick={this.props.onTrashClick}/>
+        );
       }.bind(this));
 
     return (
@@ -208,7 +217,22 @@ var FilterablePostList = React.createClass({
       .then(function(data) {
         // The backend will return the updated object as data
         //console.log(data);
-        
+
+        // Retrieve all the posts from the server again
+        this.loadPostsFromServer();
+      })
+      .fail(function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      });
+  },
+  handlePostTrash: function(post) {
+    $.ajax({
+      url: this.props.url + "/" + post.id,
+      dataType: 'json',
+      type: 'DELETE',
+      context: this
+    })
+      .then(function(data) {
         // Retrieve all the posts from the server again
         this.loadPostsFromServer();
       })
@@ -229,7 +253,8 @@ var FilterablePostList = React.createClass({
           <PostList
             posts={this.state.posts}
             filterText={this.state.filterText}
-            onLikeClick={this.handlePostLike}/>
+            onLikeClick={this.handlePostLike}
+            onTrashClick={this.handlePostTrash}/>
 
           <PostForm onPostSubmit={this.handlePostSubmit}/>
         </div>
