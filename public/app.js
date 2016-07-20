@@ -1,8 +1,11 @@
 var PostRow = React.createClass({
+  handleLikeButton: function() {
+    this.props.onLikeClick(this.props.post);
+  },
   render: function() {
     return (
       <li className="collection-item avatar">
-        <i className="material-icons circle red">thumb_up</i>
+        <i className="material-icons circle red like-button" onClick={this.handleLikeButton}>thumb_up</i>
         <a href={this.props.post.link} className="title">{this.props.post.title}</a>
         <span className="badge">{this.props.post.likes} likes</span>
       </li>
@@ -20,8 +23,8 @@ var PostList = React.createClass({
       }.bind(this)) // note the bind(this) right after closing brace for the function
       // then transform posts into PostRow components
       .map(function(element) {
-        return <PostRow key={element.id} post={element} />
-      });
+        return <PostRow key={element.id} post={element} onLikeClick={this.props.onLikeClick}/>
+      }.bind(this));
 
     return (
       <ul className="collection">
@@ -126,7 +129,7 @@ var FilterablePostList = React.createClass({
       posts: [] // for the PostList component
     };
   },
-  componentDidMount: function() {
+  loadPostsFromServer: function() {
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -140,6 +143,9 @@ var FilterablePostList = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
+  },
+  componentDidMount: function() {
+    this.loadPostsFromServer();
   },
   handleUserInput: function(filterText) {
     this.setState({
@@ -186,6 +192,30 @@ var FilterablePostList = React.createClass({
       })
       ;
   },
+  handlePostLike: function(post) {
+    // Increase the number of likes for the post
+    // (done from the frontend because the fake backend api doesn't have
+    // a specific endpoint to increase like count, like /posts/2/like)
+    post.likes++;
+
+    $.ajax({
+      url: this.props.url + "/" + post.id,
+      dataType: 'json',
+      type: 'PUT',
+      data: post,
+      context: this
+    })
+      .then(function(data) {
+        // The backend will return the updated object as data
+        //console.log(data);
+        
+        // Retrieve all the posts from the server again
+        this.loadPostsFromServer();
+      })
+      .fail(function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      });
+  },
   render: function() {
     return (
       <div className="row">
@@ -198,7 +228,8 @@ var FilterablePostList = React.createClass({
 
           <PostList
             posts={this.state.posts}
-            filterText={this.state.filterText}/>
+            filterText={this.state.filterText}
+            onLikeClick={this.handlePostLike}/>
 
           <PostForm onPostSubmit={this.handlePostSubmit}/>
         </div>
