@@ -18,6 +18,6 @@ Then, to run the backend:
 json-server --watch api/db.json
 ```
 
-Though ideally you would run the frontend server separately, you will have access to index.html via json-server at the following: http://localhost:3000/
+Though ideally you would run the frontend server separately, you will have access to index.html via json-server at the following: <http://localhost:3000/>
 
-Your fake API will be served at the endpoint http://localhost:3000/posts
+Your fake API will be served at the endpoint <http://localhost:3000/posts>
